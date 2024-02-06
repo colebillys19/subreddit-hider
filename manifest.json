@@ -1,0 +1,13 @@
+{
+    "name": "Hide'em",
+    "version": "0.1.0",
+    "description": "Hides subreddit-specifc posts from r/popular.",
+    "host_permissions": ["https://*.reddit.com/r/popular*"],
+    "content_scripts": [
+      {
+        "matches": ["https://*.reddit.com/r/popular/*"],
+        "js": ["contentScript.js"]
+      }
+    ],
+    "manifest_version": 3
+}
