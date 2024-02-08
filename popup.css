@@ -1,0 +1,11 @@
+div.container {
+  outline: 5px solid purple;
+}
+
+ul.subreddits-list {
+  display: none;
+}
+
+p.no-subreddits-text {
+  display: none;
+}

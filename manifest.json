@@ -2,6 +2,7 @@
     "name": "Hide'em",
     "version": "0.1.0",
     "description": "Hides subreddit-specifc posts from r/popular.",
+    "permissions": ["storage", "tabs"],
     "host_permissions": ["https://*.reddit.com/r/popular*"],
     "content_scripts": [
       {
@@ -9,5 +10,14 @@
         "js": ["contentScript.js"]
       }
     ],
+    "action": {
+      "default_icon": {
+        "16": "assets/test-icon-sm.png",
+        "24": "assets/test-icon-sm.png",
+        "32": "assets/test-icon-sm.png"
+      },
+      "default_title": "My YT Bookmarks",
+      "default_popup": "popup.html"
+    },
     "manifest_version": 3
 }

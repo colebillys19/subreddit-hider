@@ -1,14 +1,46 @@
-const subredditsToHide = ["news", "politics", "Fauxmoi"];
-
 (() => {
+  let subreddits = [];
+
+  /*
+   *
+   */
+  const fetchSubreddits = () => {
+    return new Promise((resolve) => {
+      chrome.storage.sync.get(["subreddits"], (obj) => {
+        resolve(obj.subreddits ? JSON.parse(obj.subreddits) : []);
+      });
+    });
+  };
+
+  /*
+   *
+   */
+  const handleAddSubreddit = async (subreddit) => {
+    subreddits = await fetchSubreddits();
+    let newSubreddits = [...subreddits, subreddit];
+    chrome.storage.sync.set({
+      subreddits: JSON.stringify(newSubreddits),
+    });
+  };
+
+  /*
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   *
+   */
   const targetPostDataDict = {};
-  const postDivs = document.querySelectorAll("div.thing");
-  postDivs.forEach((postDiv) => {
+  const postEls = document.querySelectorAll("div.thing");
+  postEls.forEach((postDiv) => {
     const postId = postDiv.id;
-    const subredditLink = postDiv.querySelector("a.subreddit");
-    if (!!subredditLink) {
-      const subreddit = subredditLink.innerText.slice(2);
-      if (subredditsToHide.includes(subreddit)) {
+    const subredditLinkEl = postDiv.querySelector("a.subreddit");
+    if (!!subredditLinkEl) {
+      const subreddit = subredditLinkEl.innerText.slice(2);
+      if (subreddits.includes(subreddit)) {
         //
         postDiv.style.backgroundColor = "#fbfbfb";
         postDiv.style.border = "1px solid #dddddd";
@@ -21,44 +53,42 @@ const subredditsToHide = ["news", "politics", "Fauxmoi"];
         //
         postDiv.style.position = "relative";
         //
-        const hiddenPostDetails = document.createElement("div");
-        hiddenPostDetails.style.position = "absolute";
-        hiddenPostDetails.style.top = "0";
-        hiddenPostDetails.style.right = "0";
-        hiddenPostDetails.style.padding = "10px";
-        hiddenPostDetails.style.backgroundColor = "#fbfbfb";
-        postDiv.appendChild(hiddenPostDetails);
+        const hiddenPostDetailsContainerEl = document.createElement("div");
+        hiddenPostDetailsContainerEl.style.position = "absolute";
+        hiddenPostDetailsContainerEl.style.top = "0";
+        hiddenPostDetailsContainerEl.style.right = "0";
+        hiddenPostDetailsContainerEl.style.padding = "10px";
+        hiddenPostDetailsContainerEl.style.backgroundColor = "#fbfbfb";
+        postDiv.appendChild(hiddenPostDetailsContainerEl);
         //
-        const hiddenPostDetailsText = document.createElement("span");
-        hiddenPostDetailsText.style.verticalAlign = "top";
-        hiddenPostDetailsText.innerText = "r/" + subreddit;
-        hiddenPostDetails.appendChild(hiddenPostDetailsText);
+        const hiddenPostDetailsTextEl = document.createElement("span");
+        hiddenPostDetailsTextEl.style.verticalAlign = "top";
+        hiddenPostDetailsTextEl.innerText = "r/" + subreddit;
+        hiddenPostDetails.appendChild(hiddenPostDetailsTextEl);
         //
-        const hiddenPostDetailsButton = document.createElement("button");
-        hiddenPostDetailsButton.style.width = "42px";
-        hiddenPostDetailsButton.style.padding = "3px 6px";
-        hiddenPostDetailsButton.style.marginLeft = "10px";
-        hiddenPostDetailsButton.style.font =
+        const hiddenPostDetailsButtonEl = document.createElement("button");
+        hiddenPostDetailsButtonEl.style.marginLeft = "10px";
+        hiddenPostDetailsButtonEl.style.font =
           "normal x-small verdana,arial,helvetica,sans-serif";
-        hiddenPostDetailsButton.innerText = "show";
-        hiddenPostDetailsButton.onclick = () => {
+        hiddenPostDetailsButtonEl.innerText = "show";
+        hiddenPostDetailsButtonEl.onclick = () => {
           if (targetPostDataDict[postId].isHidden) {
             postDivChildren.forEach((child) => {
               child.style.visibility = "visible";
               child.style.pointerEvents = "all";
-              hiddenPostDetailsButton.innerText = "hide";
+              hiddenPostDetailsButtonEl.innerText = "hide";
             });
           } else {
             postDivChildren.forEach((child) => {
               child.style.visibility = "hidden";
               child.style.pointerEvents = "none";
-              hiddenPostDetailsButton.innerText = "show";
+              hiddenPostDetailsButtonEl.innerText = "show";
             });
           }
           targetPostDataDict[postId].isHidden =
             !targetPostDataDict[postId].isHidden;
         };
-        hiddenPostDetails.appendChild(hiddenPostDetailsButton);
+        hiddenPostDetails.appendChild(hiddenPostDetailsButtonEl);
         //
         targetPostDataDict[postId] = { isHidden: true };
       }
